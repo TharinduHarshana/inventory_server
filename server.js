@@ -3,23 +3,20 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-
-
-const userRouter = require('./routes/loginRoute');
-
-
 // Load environment variables
 dotenv.config();
 
-const corsOptions = {
-    origin: [
-      "https://inventory-client-blush.vercel.app/", // Correct origin
-      "http://localhost:3000" // Additional origin that needs to be allowed
-    ],
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-  };
+const userRouter = require('./routes/loginRoute');
 
+// CORS options
+const corsOptions = {
+    origin: "https://inventory-client-blush.vercel.app", // Remove trailing slash
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    allowedHeaders: ["Content-Type", "Authorization"], // Ensure headers are allowed
+};
+
+// Initialize the app
 const app = express();
 const PORT = process.env.PORT || 8000;
 
@@ -40,7 +37,7 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error(err));
 
-//importing routes
+// Importing routes
 app.use('/user', userRouter);
 
 // Start the server
