@@ -7,14 +7,24 @@ const dotenv = require('dotenv');
 
 const userRouter = require('./routes/loginRoute');
 
+
 // Load environment variables
 dotenv.config();
+
+const corsOptions = {
+    origin: [
+      "https://inventory-client-blush.vercel.app/", // Correct origin
+      "http://localhost:3000" // Additional origin that needs to be allowed
+    ],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  };
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Basic route
