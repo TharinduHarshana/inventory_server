@@ -13,7 +13,7 @@ dotenv.config();
 
 const corsOptions = {
     origin:
-        "https://inventory-client-blush.vercel.app/", 
+        "https://inventory-client-two.vercel.app/", 
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         credentials: true,
   };
