@@ -12,11 +12,14 @@ const userRouter = require('./routes/loginRoute');
 dotenv.config();
 
 const corsOptions = {
-    origin:
+    origin: [
         "https://inventory-client-two.vercel.app", 
-        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-        credentials: true,
-  };
+        "http://localhost:3000" // Assuming your localhost client runs on port 3000
+    ],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+};
+
 
 const app = express();
 const PORT = process.env.PORT || 8000;
