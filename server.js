@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 
 
 const userRouter = require('./routes/loginRoute');
+const inventoryRouter = require('./routes/inventoryRoutes');
 
 
 // Load environment variables
@@ -43,6 +44,7 @@ mongoose.connect(process.env.MONGO_URI, {
 
 //importing routes
 app.use('/user', userRouter);
+app.use('/inventory', inventoryRouter);
 
 // Start the server
 app.listen(PORT, () => {
