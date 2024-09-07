@@ -120,10 +120,27 @@ const deleteItem = async (req, res) => {
     }
 };
 
+//get item using ID
+const getItemById = async (req, res) => {
+    try {
+        const itemId = req.params.id;
+        const item = await Inventory.findOne({ id: itemId });
+
+        if (!item) {
+            return res.status(404).json({ success: false, message: `Item with ID ${itemId} not found` });
+        }
+
+        res.status(200).json({ success: true, data: item });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server Error', error: err.message });
+    }
+};
+
 
 module.exports = {
     addItem,
     getAllItems,
     updateItem,
-    deleteItem
+    deleteItem,
+    getItemById
 };
