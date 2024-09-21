@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 
 const userRouter = require('./routes/loginRoute');
 const inventoryRouter = require('./routes/inventoryRoutes');
+const suplierRouter = require('./routes/SuplierRoutes');
 
 
 // Load environment variables
@@ -15,7 +16,7 @@ dotenv.config();
 const corsOptions = {
     origin: [
         "https://inventory-client-two.vercel.app", 
-        "http://localhost:3000" // Assuming your localhost client runs on port 3000
+        "http://localhost:3001" // Assuming your localhost client runs on port 3000
     ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
@@ -45,6 +46,7 @@ mongoose.connect(process.env.MONGO_URI, {
 //importing routes
 app.use('/user', userRouter);
 app.use('/inventory', inventoryRouter);
+app.use('/suplier', suplierRouter);
 
 // Start the server
 app.listen(PORT, () => {
