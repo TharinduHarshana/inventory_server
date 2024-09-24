@@ -17,10 +17,15 @@ const inventorySchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    price: {
+    costPrice: {
         type: Number,
         required: true
     },
+    sellingPrice: {
+        type: Number,
+        required: true
+    },
+
     volumeWeight: {
         type: String,
         required: true

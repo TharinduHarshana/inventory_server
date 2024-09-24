@@ -23,7 +23,8 @@ const addItem = async (req, res) => {
     // Validation
     await check('name').notEmpty().withMessage('Enter Name').run(req);
     await check('tag').notEmpty().withMessage('Enter Tag').run(req);
-    await check('price').notEmpty().withMessage('Enter Price').run(req);
+    await check('costPrice').notEmpty().withMessage('Enter  Cost Price').run(req);
+    await check('sellingPrice').notEmpty().withMessage('Enter  Selling Price').run(req);
     await check('volumeWeight').notEmpty().withMessage('Enter Volume Weight').run(req);
     await check('supplier').notEmpty().withMessage('Enter Supplier').run(req);
     await check('quantity').notEmpty().withMessage('Enter Quantity').run(req);
@@ -73,7 +74,8 @@ const updateItem = async (req, res) => {
     // Validate the inputs if needed
     await check('name').notEmpty().withMessage('Enter Name').run(req);
     await check('tag').notEmpty().withMessage('Enter Tag').run(req);
-    await check('price').notEmpty().withMessage('Enter Price').run(req);
+    await check('costPrice').notEmpty().withMessage('Enter Cost Price').run(req);
+    await check('sellingPrice').notEmpty().withMessage('Enter Selling Price').run(req);
     await check('volumeWeight').notEmpty().withMessage('Enter Volume Weight').run(req);
     await check('supplier').notEmpty().withMessage('Enter Supplier').run(req);
     await check('quantity').notEmpty().withMessage('Enter Quantity').run(req);
