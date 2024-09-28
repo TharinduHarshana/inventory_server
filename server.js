@@ -9,6 +9,9 @@ const userRouter = require('./routes/loginRoute');
 const inventoryRouter = require('./routes/inventoryRoutes');
 const suplierRouter = require('./routes/SuplierRoutes');
 const expenseRouter = require('./routes/expeseRoutes');
+const customerRouter = require('./routes/customerRoutes');
+const saleRouter = require('./routes/saleRoutes');
+const reportRouter = require('./routes/reportRoute');
 
 
 // Load environment variables
@@ -49,6 +52,9 @@ app.use('/user', userRouter);
 app.use('/inventory', inventoryRouter);
 app.use('/suplier', suplierRouter);
 app.use('/expense', expenseRouter);
+app.use('/customer', customerRouter);
+app.use('/sale', saleRouter);
+app.use('/report', reportRouter);
 
 // Start the server
 app.listen(PORT, () => {
