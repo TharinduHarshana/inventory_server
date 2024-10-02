@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createSale , getAllSales, deleteSale,updateSaleStatus } = require('../controller/saleController');
+const { createSale, getAllSales, deleteSale, updateSaleStatus } = require('../controller/saleController');
 
 // Route to create a new sale
 router.post('/add', createSale);
@@ -12,6 +12,6 @@ router.get('/', getAllSales);
 router.delete('/:id', deleteSale);
 
 // Route to update sale status
-router.put('/:id', updateSaleStatus);
+router.put('/:id', updateSaleStatus); // Just call updateSaleStatus
 
 module.exports = router;

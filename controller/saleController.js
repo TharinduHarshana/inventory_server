@@ -1,5 +1,6 @@
 const Sale = require('../models/saleModel');
 const Customer = require('../models/customerModel');
+const Inventory = require('../models/inventoryModel');
 
 // Create Sale
 const createSale = async (req, res) => {
@@ -83,12 +84,41 @@ const updateSaleStatus = async (req, res) => {
 
         // Update the tracking number and sale status
         sale.trackingNumber = trackingNumber;
-        sale.saleStatus = saleStatus;
 
-        await sale.save();
+        // If the sale status is being changed to "Shifted", decrease inventory
+        if (saleStatus === 'Shifted') {
+            await decreaseInventory(sale.items); // Decrement the inventory
+        }
+
+        sale.saleStatus = saleStatus; // Update the sale status
+        await sale.save(); // Save the updated sale
+
         res.status(200).json({ message: 'Sale updated successfully', sale });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+
+//inventory decrease function 
+const decreaseInventory = async (items) => {
+    try {
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const inventoryItem = await Inventory.findOne({ itemID: item.itemID }); // Use itemID from your inventory schema
+            if (inventoryItem) {
+                if (inventoryItem.quantity >= item.quantity) {
+                    inventoryItem.quantity -= item.quantity; // Decrease by the sold quantity
+                    await inventoryItem.save();
+                } else {
+                    console.log(`Insufficient quantity for item ${item.itemID}`); // Log if insufficient stock
+                }
+            } else {
+                console.log(`Item with ID ${item.itemID} not found in inventory`); // Log if item not found
+            }
+        }
+    } catch (error) {
+        console.log('Error while updating inventory', error);
     }
 };
 

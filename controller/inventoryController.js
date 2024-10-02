@@ -144,5 +144,5 @@ module.exports = {
     getAllItems,
     updateItem,
     deleteItem,
-    getItemById
+    getItemById,
 };
