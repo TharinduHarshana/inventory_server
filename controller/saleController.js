@@ -7,7 +7,7 @@ const createSale = async (req, res) => {
     try {
         const { customerId, items, totalAmount } = req.body;
 
-        // Fetch the customer(s) based on provided ID(s)
+        // Fetch the customer based on provided ID
         const customer = await Customer.findById(customerId);
         if (!customer) {
             return res.status(404).json({ message: 'Customer not found' });
@@ -26,7 +26,7 @@ const createSale = async (req, res) => {
                 }
             ],
             items: items.map(item => ({
-                itemID: item.itemID,
+                itemID: item.itemID, // Ensure this exists in the incoming request body
                 name: item.name,
                 sellingPrice: item.sellingPrice,
                 quantity: item.quantity,
@@ -36,10 +36,18 @@ const createSale = async (req, res) => {
             totalAmount,
             saleStatus: 'To be Shift'
         });
+        
 
+
+        // Save the sale to the database
         await sale.save();
+
+        // Update inventory quantities after sale is saved
+        await decreaseInventory(items); // Make sure this function works as expected
+
         res.status(201).json({ message: 'Sale completed successfully', sale });
     } catch (error) {
+        console.error('Error creating sale:', error); // Improved error logging
         res.status(500).json({ message: 'Server error', error });
     }
 };
@@ -100,27 +108,50 @@ const updateSaleStatus = async (req, res) => {
 };
 
 
-//inventory decrease function 
+// Decrease Inventory
 const decreaseInventory = async (items) => {
-    try {
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            const inventoryItem = await Inventory.findOne({ itemID: item.itemID }); // Use itemID from your inventory schema
-            if (inventoryItem) {
-                if (inventoryItem.quantity >= item.quantity) {
-                    inventoryItem.quantity -= item.quantity; // Decrease by the sold quantity
-                    await inventoryItem.save();
-                } else {
-                    console.log(`Insufficient quantity for item ${item.itemID}`); // Log if insufficient stock
-                }
-            } else {
-                console.log(`Item with ID ${item.itemID} not found in inventory`); // Log if item not found
-            }
-        }
-    } catch (error) {
-        console.log('Error while updating inventory', error);
-    }
-};
+    
+}
+
+
+
+// const decreaseInventory = async (items) => {
+//     try {
+//         if (!Array.isArray(items) || items.length === 0) {
+//             throw new Error('No items found to update inventory');
+//         }
+
+//         for (let i = 0; i < items.length; i++) {
+//             const item = items[i];
+//             console.log(`Processing item ${item.itemID} with quantity ${item.quantity}`);
+
+//             const inventoryItem = await Inventory.findOne({ itemID: item.itemID });
+
+//             if (inventoryItem) {
+//                 console.log(`Found inventory item ${inventoryItem.itemID} with stock quantity ${inventoryItem.quantity}`);
+                
+//                 if (inventoryItem.quantity >= item.quantity) {
+//                     // Reduce inventory quantity by the sold quantity
+//                     inventoryItem.quantity -= item.quantity;
+//                     console.log(`Reducing quantity by ${item.quantity}. New quantity: ${inventoryItem.quantity}`);
+
+//                     await inventoryItem.save(); // Save updated inventory
+//                     console.log(`Inventory updated for item ${item.itemID}`);
+//                 } else {
+//                     console.log(`Insufficient quantity for item ${item.itemID}. Stock: ${inventoryItem.quantity}, Required: ${item.quantity}`);
+//                 }
+//             } else {
+//                 console.log(`Item with ID ${item.itemID} not found in inventory`);
+//             }
+//         }
+//     } catch (error) {
+//         console.error('Error while updating inventory', error);
+//         throw new Error(`Error while updating inventory: ${error.message}`);
+//     }
+// };
+
+
+
 
 
 
