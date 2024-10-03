@@ -32,7 +32,7 @@ const saleSchema = new mongoose.Schema({
     },
     saleStatus: {
         type: String,
-        enum: ['To be Shift', 'Shifted', 'completed'],
+        enum: ['To be Shift', 'Shiped', 'completed'],
         default: 'Blocked'
     },
     createdAt: {

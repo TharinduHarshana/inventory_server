@@ -85,8 +85,8 @@ const updateSaleStatus = async (req, res) => {
         // Update the tracking number and sale status
         sale.trackingNumber = trackingNumber;
 
-        // If the sale status is being changed to "Shifted", decrease inventory
-        if (saleStatus === 'Shifted') {
+        // If the sale status is being changed to "Shiped", decrease inventory
+        if (saleStatus === 'Shiped') {
             await decreaseInventory(sale.items); // Decrement the inventory
         }
 
