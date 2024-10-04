@@ -14,53 +14,33 @@ app.use(express.json());
 // Store the selected MongoDB URI (default to Store1)
 let mongoUri = process.env.MONGO_URI;
 
-// Helper function to clear Mongoose's internal state, connections, and caches
-const advancedClearMongoose = async () => {
+// Helper function to disconnect and reset Mongoose models and caches
+const clearMongooseCache = async () => {
     try {
+        // Disconnect if currently connected
         if (mongoose.connection.readyState === 1) {
-            // Disconnect from the current MongoDB connection
             await mongoose.disconnect();
             console.log('Disconnected from MongoDB.');
         }
+        
+        // Clear the connection pool
+        await mongoose.connection.close();
+        console.log('Connection pool cleared.');
 
-        // Ensure that any remaining connections are fully closed
-        if (mongoose.connection.readyState !== 0) {
-            await mongoose.connection.close();
-            console.log('Connection closed.');
-        }
-
-        // Clear all models and model schemas
+        // Clear Mongoose's internal models and schemas caches
         mongoose.models = {};
         mongoose.modelSchemas = {};
-
-        // Clear Mongoose's internal state, including any cached indexes or connections
-        const collections = Object.keys(mongoose.connection.collections);
-        for (const collection of collections) {
-            delete mongoose.connection.collections[collection];
-        }
-
-        console.log('Mongoose caches and collections cleared.');
-
-        // Clear connection-related cache or connection pools to avoid memory leaks
-        mongoose.connections.forEach((connection, index) => {
-            mongoose.connections[index].readyState = 0; // Set connection state to disconnected
-            mongoose.connections[index].close();        // Close connections explicitly
-            console.log(`Closed connection ${index}.`);
-        });
-
-        mongoose.connection.close();  // Finally close all remaining connection pools
-        console.log('Final connection pool closed.');
-
+        console.log('Mongoose model caches cleared.');
     } catch (err) {
-        console.error('Error clearing Mongoose:', err);
+        console.error('Error clearing Mongoose cache:', err);
     }
 };
 
-// Function to connect to MongoDB and reload models
+// Function to connect to MongoDB and load models
 const connectToMongoDB = async (uri) => {
     try {
-        // Perform advanced clearing before reconnecting to a new database
-        await advancedClearMongoose();
+        // Clear previous connection, model caches, and pools
+        await clearMongooseCache();
 
         // Connect to the new MongoDB instance
         await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
