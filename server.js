@@ -14,18 +14,21 @@ app.use(express.json());
 // Store the selected MongoDB URI (default to Store1)
 let mongoUri = process.env.MONGO_URI;
 
-// Function to connect to MongoDB and reinitialize models
+// Function to connect to MongoDB and clear the models cache
 const connectToMongoDB = async (uri) => {
     try {
         await mongoose.connect(uri);
         console.log(`MongoDB connected to ${uri}`);
 
+        // Clear the cached models before loading them again
+        mongoose.models = {};
+
         // Dynamically reload models after switching databases
-        require('./models/SuppliersModel');      
-        require('./models/customerModel'); 
-        require('./models/expenseModel');  
+        require('./models/SuppliersModel');
+        require('./models/customerModel');
+        require('./models/expenseModel');
         require('./models/inventoryModel');
-        require('./models//saleModel');
+        require('./models/saleModel');
 
     } catch (err) {
         console.error(`Error connecting to MongoDB:`, err);
