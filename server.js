@@ -28,9 +28,9 @@ const connectToMongoDB = async (uri) => {
         mongoose.modelSchemas = {};
         
         // Clear Mongoose's internal connection pool
-        mongoose.connection.close(() => {
-            console.log('Connection pool cleared.');
-        });
+        await mongoose.connection.close(); // No callback needed, just await this
+
+        console.log('Connection pool cleared.');
 
         // Connect to the new MongoDB instance
         await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -48,6 +48,7 @@ const connectToMongoDB = async (uri) => {
         throw err; // Re-throw error to ensure failure is handled
     }
 };
+
 
 // Initial MongoDB connection
 connectToMongoDB(mongoUri);
