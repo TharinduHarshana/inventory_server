@@ -14,14 +14,27 @@ app.use(express.json());
 // Store the selected MongoDB URI (default to Store1)
 let mongoUri = process.env.MONGO_URI;
 
-// Function to connect to MongoDB and clear the models cache
+// Function to connect to MongoDB and clear models and connection pool
 const connectToMongoDB = async (uri) => {
     try {
-        await mongoose.connect(uri);
-        console.log(`MongoDB connected to ${uri}`);
+        // Disconnect from the current MongoDB connection if already connected
+        if (mongoose.connection.readyState === 1) {
+            await mongoose.disconnect();
+            console.log('MongoDB disconnected.');
+        }
 
-        // Clear the cached models before loading them again
+        // Clear all models to avoid model caching issues
         mongoose.models = {};
+        mongoose.modelSchemas = {};
+        
+        // Clear Mongoose's internal connection pool
+        mongoose.connection.close(() => {
+            console.log('Connection pool cleared.');
+        });
+
+        // Connect to the new MongoDB instance
+        await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        console.log(`MongoDB connected to ${uri}`);
 
         // Dynamically reload models after switching databases
         require('./models/SuppliersModel');
@@ -32,6 +45,7 @@ const connectToMongoDB = async (uri) => {
 
     } catch (err) {
         console.error(`Error connecting to MongoDB:`, err);
+        throw err; // Re-throw error to ensure failure is handled
     }
 };
 
@@ -53,16 +67,12 @@ app.post('/set-store', async (req, res) => {
     }
 
     try {
-        // Disconnect from the current MongoDB instance
-        await mongoose.disconnect();
-        console.log('MongoDB disconnected.');
-
-        // Reconnect with the new URI and reinitialize models
+        // Reconnect to the new database and clear models
         await connectToMongoDB(mongoUri);
-        res.status(200).send({ message: `Switched to ${store} and connected to new database.` });
+        res.status(200).send({ message: `Switched to ${store} and connected to the new database.` });
     } catch (err) {
         console.error(`Failed to switch MongoDB: ${err}`);
-        res.status(500).send({ message: 'Failed to switch store and reconnect to database.' });
+        res.status(500).send({ message: 'Failed to switch store and reconnect to the database.' });
     }
 });
 
