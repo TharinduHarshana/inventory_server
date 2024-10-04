@@ -22,8 +22,13 @@ const connectToMongoDB = async (uri) => {
             useUnifiedTopology: true
         });
         console.log(`MongoDB connected to ${uri}`);
+
+        // Clear the existing models and schemas
+        mongoose.models = {};       // Clear existing models
+        mongoose.modelSchemas = {}; // Clear model schemas
+
     } catch (err) {
-        console.error(`Error connecting to MongoDB:`);
+        console.error(`Error connecting to MongoDB:`, err);
     }
 };
 
@@ -51,6 +56,7 @@ app.post('/set-store', async (req, res) => {
 
         // Reconnect with the new URI
         await connectToMongoDB(mongoUri);
+
         res.status(200).send({ message: `Switched to ${store} and connected to new database.` });
     } catch (err) {
         console.error(`Failed to switch MongoDB: ${err}`);
