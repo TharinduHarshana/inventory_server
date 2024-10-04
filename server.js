@@ -14,18 +14,18 @@ app.use(express.json());
 // Store the selected MongoDB URI (default to Store1)
 let mongoUri = process.env.MONGO_URI;
 
-// Function to connect to MongoDB
+// Function to connect to MongoDB and reinitialize models
 const connectToMongoDB = async (uri) => {
     try {
-        await mongoose.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
+        await mongoose.connect(uri);
         console.log(`MongoDB connected to ${uri}`);
 
-        // Clear the existing models and schemas
-        mongoose.models = {};       // Clear existing models
-        mongoose.modelSchemas = {}; // Clear model schemas
+        // Dynamically reload models after switching databases
+        require('./models/SuppliersModel');      
+        require('./models/customerModel'); 
+        require('./models/expenseModel');  
+        require('./models/inventoryModel');
+        require('./models//saleModel');
 
     } catch (err) {
         console.error(`Error connecting to MongoDB:`, err);
@@ -54,9 +54,8 @@ app.post('/set-store', async (req, res) => {
         await mongoose.disconnect();
         console.log('MongoDB disconnected.');
 
-        // Reconnect with the new URI
+        // Reconnect with the new URI and reinitialize models
         await connectToMongoDB(mongoUri);
-
         res.status(200).send({ message: `Switched to ${store} and connected to new database.` });
     } catch (err) {
         console.error(`Failed to switch MongoDB: ${err}`);
@@ -72,7 +71,7 @@ app.get('/', (req, res) => {
 // Routes (import your routes as necessary)
 const userRouter = require('./routes/loginRoute');
 const inventoryRouter = require('./routes/inventoryRoutes');
-const suplierRouter = require('./routes/SuplierRoutes');
+const supplierRouter = require('./routes/SuplierRoutes');
 const expenseRouter = require('./routes/expeseRoutes');
 const customerRouter = require('./routes/customerRoutes');
 const saleRouter = require('./routes/saleRoutes');
@@ -80,7 +79,7 @@ const reportRouter = require('./routes/reportRoute');
 
 app.use('/user', userRouter);
 app.use('/inventory', inventoryRouter);
-app.use('/suplier', suplierRouter);
+app.use('/supplier', supplierRouter);
 app.use('/expense', expenseRouter);
 app.use('/customer', customerRouter);
 app.use('/sale', saleRouter);
