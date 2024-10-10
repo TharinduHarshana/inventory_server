@@ -43,7 +43,7 @@ const connectToMongoDB = async (uri) => {
         await clearMongooseCache();
 
         // Connect to the new MongoDB instance
-        await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect(uri);
         console.log(`MongoDB connected to ${uri}`);
 
         // Dynamically reload models after switching databases
