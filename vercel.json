@@ -17,7 +17,7 @@
       "source": "/api/(.*)", 
       "headers": [
         {
-          "key": "Cache-Control",
+          "key": "Cache-Control", 
           "value": "no-store, max-age=0"
         }
       ]
